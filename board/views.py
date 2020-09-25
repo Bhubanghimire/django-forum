@@ -7,3 +7,11 @@ from .models import Board
 def index(request):
     boards = Board.objects.all()
     return render(request, 'home.html', {'boards': boards})
+
+
+def board_topics(request, id):
+    try:
+        board = Board.objects.get(pk=id)
+    except Board.DoesNotExist:
+        raise Http404
+    return render(request, 'topics.html', {'board': board})

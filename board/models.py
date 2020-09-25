@@ -14,6 +14,7 @@ class Topic(models.Model):
     last_update = models.DateField(auto_now_add=True)
     board = models.ForeignKey(Board,on_delete=models.CASCADE,related_name='topic')
     starter = models.ForeignKey(User,on_delete=models.CASCADE,related_name='user')
+    last_updated = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
