@@ -10,6 +10,7 @@ class Board(models.Model):
         return self.name
 
 class Topic(models.Model):
+    name =models.CharField(max_length=200)
     subject = models.CharField(max_length=200)
     last_update = models.DateField(auto_now_add=True)
     board = models.ForeignKey(Board,on_delete=models.CASCADE,related_name='topic')
