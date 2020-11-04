@@ -12,41 +12,35 @@ def index(request):
     return render(request, 'home.html', {'boards': boards})
 
 
-def board_topics(request, id):
+def board_topics(request, pk):
     try:
-        board = Board.objects.get(pk=id)
+        board = Board.objects.get(pk=pk)
     except Board.DoesNotExist:
         raise Http404
     return render(request, 'topics.html', {'board': board})
 
 
-def new_topics(request, id):
-
-    board = get_object_or_404(Board, pk=id)
-    user = User.objects.first()
+def new_topics(request, pk):
+    board = get_object_or_404(Board, pk=pk)
 
     if request.method == 'POST':
-        form = NewTopicForm(request.POST)
+        subject = request.POST['subject']
+        message = request.POST['message']
 
-        if form.is_valid():
-            subject = request.POST['subject']
-            message = request.POST['message']
+        user = User.objects.first()  # TODO: get the currently logged in user
 
-            topic = Topic.objects.create(
-                subject=subject,
-                board=board,
-                starter=user
-            )
+        topic = Topic.objects.create(
+            subject=subject,
+            board=board,
+            starter=user
+        )
 
-            post = Post.objects.create(
-                message=message,
-                topic=topic,
-                created_by=user
-            )
+        post = Post.objects.create(
+            message=message,
+            topic=topic,
+            created_by=user
+        )
 
-            # TODO: redirect to the created topic page
-            return redirect('board_topics', id=board.id)
+        return redirect('board_topics', pk=board.pk)  # TODO: redirect to the created topic page
 
-    else:
-        form = NewTopicForm()
-    return render(request, 'new_topics.html', {'board': board,'form':form})
+    return render(request, 'new_topics.html', {'board': board})
