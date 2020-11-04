@@ -1,8 +1,12 @@
+
 {% extends 'base.html' %}
 
 {% block breadcrumb %}
   <li class="breadcrumb-item active">Boards</li>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 {% endblock %}
+
 
 {% block content %}
   <table class="table">
