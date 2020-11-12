@@ -4,6 +4,7 @@ from .models import Board, Topic, Post
 from django.contrib.auth.models import User
 from .forms import NewTopicForm
 from django.contrib.auth.decorators import login_required
+from django.views.generic import ListView, DetailView, FormView, UpdateView, CreateView
 
 # Create your views here.
 from .models import Topic
@@ -40,7 +41,22 @@ def new_topics(request, pk):
         form = NewTopicForm()
     return render(request, 'new_topics.html', {'board': board, 'form': form})
 
-@login_required
-def topic_posts(request, pk, topic_pk):
-    topic = get_object_or_404(Topic,pk=topic_pk, board__pk=pk)
-    return render(request, 'Topic_posts.html', {'topic': topic})
+
+
+class TopicPostsView(DetailView):
+    model = Topic
+    template_name = "topic_posts.html"
+
+    def get_object(self):
+        self.topic = get_object_or_404(
+            Topic, board__pk=self.kwargs['pk'], pk=self.kwargs['topic_pk'])
+        
+        return self.topic
+
+    def get_context_data(self, **kwargs):
+        session_key = 'viewed_topic_{}'.format(self.topic.pk) # <-- here
+        if not self.request.session.get(session_key, False):
+            self.topic.views += 1
+            self.topic.save()
+            self.request.session[session_key] = True           # <-- until here
+        return super().get_context_data(**kwargs)
