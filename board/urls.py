@@ -7,5 +7,4 @@ urlpatterns = [
     path('boards/<int:pk>/', board_topics, name='board_topics'),
     path('boards/<int:pk>/new', new_topics, name='new_topics'),
     path('boards/<int:pk>/topics/<int:topic_pk>/', topic_posts, name='topic_posts'),
-
 ]
