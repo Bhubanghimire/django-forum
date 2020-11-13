@@ -42,5 +42,8 @@ class Post(models.Model):
     created_by = models.ForeignKey(User,on_delete=models.CASCADE, related_name='posts')
     updated_by = models.ForeignKey(User,on_delete=models.CASCADE, null=True, related_name='+')
 
+    def get_message_as_markdown(self):
+        return mark_safe(markdown(self.message, safe_mode='escape'))
+
     def __str__(self):
         return self.message
