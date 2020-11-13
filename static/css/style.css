@@ -1,3 +1,12 @@
 .navbar-brand {
     font-family: 'Peralta', cursive;
   }
+.container{
+    background-color:brown;
+    background-image: url('../storage/1.jpeg');;
+    background:linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6)),url('http://www.fuzzylovephoto.com/wp-content/uploads/2020/04/ranger-4df6c1b6.png');
+    background-size: cover;
+      background-repeat: no-repeat;
+      opacity: 1;
+      height: 1vh;
+  }
