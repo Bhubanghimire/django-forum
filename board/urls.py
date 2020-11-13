@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import index,board_topics,new_topics,reply_topic,PostUpdateView,UserUpdateView,PostListView
+from .views import index,new_topics,reply_topic,PostUpdateView,UserUpdateView,PostListView,TopicListView
 from django.conf.urls import url
 
 urlpatterns = [
     path('',index,name='index'),
-    path('boards/<int:pk>/', board_topics, name='board_topics'),
+    path('boards/<int:pk>/',TopicListView.as_view(), name='board_topics'),
     path('boards/<int:pk>/new', new_topics, name='new_topics'),
     path('boards/<int:pk>/topics/<int:topic_pk>/', PostListView.as_view(), name='topic_posts'),
     path('boards/<int:pk>/topics/<int:topic_pk>/reply/', reply_topic, name='reply_topic'),

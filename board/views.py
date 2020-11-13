@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+import math
 
 
 # Create your views here.
@@ -20,22 +20,20 @@ def index(request):
     boards = Board.objects.all()
     return render(request, 'home.html', {'boards': boards})
 
-def board_topics(request, pk):
-    board = get_object_or_404(Board, pk=pk)
-    queryset = board.topic.order_by('-last_updated').annotate(replies=Count('posts') - 1)
-    page = request.GET.get('page', 1)
+class TopicListView(ListView):
+    model = Topic
+    context_object_name = 'topics'
+    template_name = 'topics.html'
+    paginate_by = 8
 
-    paginator = Paginator(queryset, 6)
+    def get_context_data(self, **kwargs):
+        kwargs['board'] = self.board
+        return super().get_context_data(**kwargs)
 
-    try:
-        topics = paginator.page(page)
-    except PageNotAnInteger:
-        # fallback to the first page
-        topics = paginator.page(1)
-    except EmptyPage:
-        topics = paginator.page(paginator.num_pages)
-
-    return render(request, 'topics.html', {'board': board, 'topics': topics})
+    def get_queryset(self):
+        self.board = get_object_or_404(Board, pk=self.kwargs.get('pk'))
+        queryset = self.board.topic.order_by('-last_updated').annotate(replies=Count('posts') - 1)
+        return queryset
 
 class PostListView(ListView):
     model = Post
@@ -89,6 +87,8 @@ def reply_topic(request, pk, topic_pk):
             post.topic = topic
             post.created_by = request.user
             post.save()
+            topic.last_updated = timezone.now()  # <- here
+            topic.save() 
             return redirect('topic_posts', pk=pk, topic_pk=topic_pk)
     else:
         form = PostForm()
